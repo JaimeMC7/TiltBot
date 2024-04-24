@@ -1,0 +1,17 @@
+@startuml
+package "Modulo de visión"{
+[Raspy cam] as Cam
+[Raspberry 3 B+] as Raspy
+}
+
+package "Modulo de acción"{
+[Arduino UNO] as Arduino
+[Servo motor 1] as Servo1
+[Servo motor 2] as Servo2
+}
+
+Cam --> Raspy
+Raspy --> Arduino
+Arduino --> Servo1
+Arduino --> Servo2
+@enduml
