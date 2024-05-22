@@ -51,7 +51,7 @@ Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos 
 
 ### Módulo de acción
 #### Hardware
-![Action-module-HW-components](Images/Action-Module/HW-components.jpg)
+![Action-module-HW-components](Images/Action_Module/HW-components.jpg)
 
 
 #### Software
