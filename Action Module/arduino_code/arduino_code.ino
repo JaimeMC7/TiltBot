@@ -4,14 +4,14 @@
  
 // Includes y declaraciones de servo motores
 #define PIN_SERVO_EXT 6
-//#define PIN_SERVO_INT 5
+#define PIN_SERVO_INT 5
 
 #include <Servo.h>
 #include <Keyboard.h>
 
 
 Servo servoExterior;
-//Servo servoInterior;
+Servo servoInterior;
 
 
 // Valores de entrada Joystick
@@ -38,7 +38,8 @@ void setup(){
   servoExterior.write(130);
 
 	//Enlazamos el motor interior al pin PIN_SERVO_INT
-	//servoInterior.attach(PIN_SERVO_INT);
+	servoInterior.attach(PIN_SERVO_INT);
+  servoInterior.write(123);
   
 
   
@@ -101,7 +102,8 @@ void loop(){
 
   
   x_ang = map( x, 0, 1023, 45, 180 );
-  y_ang = map( y, 0, 1023, 0, 180 );
+  y_ang = map( y, 0, 1023, 140, 100 );
+  //y_ang = 100;//120 centro
 
   //Print de los valores en monitor serie
   
@@ -121,12 +123,11 @@ void loop(){
 	//Desplazar motor exterior a x_angº
 	
   servoExterior.write(x_ang);
-
-	//servoInterior.write(y_ang);
+  servoInterior.write(y_ang);
   
 
   //Esperar 1/4 de segundo (en milisegundos)
-	//delay(1000);
+	//delay(2000);
   
 
 }
