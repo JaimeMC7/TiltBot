@@ -51,18 +51,18 @@ La estructura es una de las partes de mayor importancia en este proyecto.
 Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos interconectados
 
 ### Módulo de acción
-#### Hardware
+#### Action Hardware
 <img src="Action Module/Action Module circuit v1.png" alt="Action-module-HW-components" width="600" height="400">
 
 
-#### Software
+#### Action Software
 
 
 ### Módulo de visión
-#### Hardware
+#### Vision Hardware
 
 
-#### Software
+#### Vision Software
 *Dependencias*:
 - OpenCV/cv2 [MODIFICAR POR LA LIBRERIA USADA]
 
