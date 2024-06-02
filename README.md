@@ -9,11 +9,12 @@
   - [Paredes y tapones](#Paredes-y-tapones)
 - [Arquitectura](#Arquitectura)
   - [Módulo de acción](#Módulo-de-acción)
-    - [Hardware](#Hardware)
-    - [Software](#Software)
+    - [Action Hardware](#Action-Hardware)
+    - [Action Software](#Action-Software)
   - [Módulo de visión](#Módulo-de-visión)
-    - [Hardware](#Hardware)
-    - [Software](#Software)
+    - [Vision Hardware](#Vision-Hardware)
+    - [Vision Software](#Vision-Software)
+    - [Limitaciones](#Vision-Limitations)
 - [TO DOs](#TO-DOs)
 - [Referencias](#Referencias)
 
@@ -29,7 +30,7 @@ del laberinto en el que se encuentra la bola.
 Si cruzar el laberinto se te hace dificil, TiltBot tiene una funcionalidad extra. 
 Puedes cambiar a un modo automático, en el que mediante IA 
 se resolverá el laberinto, mostrandote uno de los posibles caminos hacia 
-el final.
+el final. (Por el momento el algoritmo es algo limitado. Vease en el apartado [Limitaciones](#Vision-Limitations) )
 
 Además, para aumentar la cantidad de diversión, el formato del laberinto puede
 personalizarse. Puedes abrir o cerrar agujeros, así como reestructurar las paredes
