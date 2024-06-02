@@ -71,17 +71,23 @@ Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos 
 
 
 ## TO DOs
-- Probar diferentes rangos de desplazamiento de los servos de la plataforma del laberinto.
-- Módulo de visión.
-  - Diferenciar obstaculos, bola y camino del laberinto con cámara.
-  - Algoritmo para resolver el laberinto.
-  - Calibrar ordenes para desplazar la bola en la dirección correcta.
+- [x] Diseño y montaje de la estructura.
+- [x] Calibrar rangos de desplazamiento de los servomotores de la plataforma del laberinto.
+  - [x] En el codigo
+  - [x] Fisicamente 
+- [ ] Módulo de visión.
+  - [x] Diferenciar obstaculos, bola y camino del laberinto con cámara.
+  - [x] Algoritmo basico para resolver el laberinto.
+  - [ ] Mejorar el algoritmo de resolución.
+  - [ ] Calibrar ordenes para desplazar la bola en la dirección correcta.
+- [ ] Comunicación entre modulo de visión y de acción
 
 
 ## Referencias
 - Idea original del proyecto, por Antonio Álvarez: https://www.youtube.com/watch?v=PMSr5L0SD24
 - Tutorial - Uso de Joysticks en Arduino: https://programarfacil.com/blog/arduino-blog/joystick-con-arduino/
 - Tutorial - Uso de Servos en Arduino: https://programarfacil.com/blog/arduino-blog/servomotor-con-arduino/
-
+- Tutorial - Send data from Arduino to Raspberry (Serial connection): https://www.youtube.com/watch?v=-3swby4ryU4
+- 
 
 
