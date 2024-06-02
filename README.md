@@ -65,6 +65,10 @@ Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos 
 #### Vision Software
 *Dependencias*:
 - OpenCV/cv2 [MODIFICAR POR LA LIBRERIA USADA]
+- Numpy
+
+#### Vision Limitations
+
 
 ## TO DOs
 - Probar diferentes rangos de desplazamiento de los servos de la plataforma del laberinto.
