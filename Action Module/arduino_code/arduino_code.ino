@@ -9,17 +9,175 @@
 #include <Servo.h>
 #include <Keyboard.h>
 
+// Include para conexion serial con Raspberry Pi
+#include <ArduinoJson.h>
 
 Servo servoExterior;
 Servo servoInterior;
 
-
-// Valores de entrada Joystick
-int x, y;
-// Angulos equivalentes
-int x_ang, y_ang;
+// Valores centrales servomotores
+int central_external_servo = 130;
+int central_internal_servo = 123;
 
 
+// Modo de juego
+bool automatic = true;
+
+
+
+
+// Enviar senal en serie
+//
+// Mensajes enviados:
+//   200 --> empezar proceso automatico
+//   300 --> siguiente punto
+//   400 --> cancelar/acabar proceso
+//
+void serial_out(int value){
+
+  StaticJsonDocument<200> jsonDoc;
+  jsonDoc["value"] = value;
+  serializeJson(jsonDoc, Serial);
+
+}
+
+
+// Girar servomotores
+void move(int x_ang, int y_ang){
+  servoExterior.write(x_ang);
+  servoInterior.write(y_ang);
+}
+
+// Todo el calculo automatico y comunicacion
+void automatic_move(){
+
+  // Decimos que empezamos el proceso
+  serial_out(200);
+
+  while (automatic){
+
+    if (Serial.available() > 0) {
+
+      String receivedString = Serial.readStringUntil('\n');
+      StaticJsonDocument<200> jsonDoc;
+      DeserializationError error = deserializeJson(jsonDoc, receivedString);
+
+      if (!error) {
+        int state = jsonDoc["state"];
+
+        if (state == 400){ 
+          break;
+        } 
+        // else: ended == 200
+    
+        int x_value = jsonDoc["x_value"];
+        int y_value = jsonDoc["y_value"];
+
+        Serial.print("Received values: {x_value: ");
+        Serial.print(x_value);
+        Serial.print(", y_value: "); 
+        Serial.print(y_value);
+        Serial.println();
+
+        int x_ang = map( x_value, -1, 1, 45, 180 );
+        int y_ang = map( y_value, -1, 1, 140, 100 );
+
+        // Movemos
+        move(x_ang, y_ang);
+        delay(2000);
+
+        // Recolocamos
+        move(central_external_servo, central_internal_servo);
+        delay(500);
+
+        // Decimos que continuamos
+        serial_out(300);
+      }
+
+    }
+
+  }
+
+}
+
+
+void manual_move(){
+  // Posiciones del joystick
+  int x = analogRead(PIN_VRx);
+  int y = analogRead(PIN_VRy);
+  // Mapeo de los valores a grados (0-180)
+
+  int x_ang = map( x, 0, 1023, 45, 180 );
+  int y_ang = map( y, 0, 1023, 140, 100 );
+  //y_ang = 100; //120 centro; //140
+
+  //Print de los valores en monitor serie
+  
+  Serial.print( "Joystick x value:" );
+  Serial.print(x);
+  Serial.print("  ");
+
+  Serial.print( "Joystick y value:" );
+  Serial.print(y);
+  
+  //Desplazar servomotores
+  move(x_ang, y_ang);
+	
+  // servoExterior.write(x_ang);
+  // servoInterior.write(y_ang);
+
+}
+
+
+
+// Comprobamos si se ha pulsado el joystick
+//
+// Si se ha pulsado, cambiamos a modo automatico
+void check_change_button(){
+
+  int change = digitalRead(PIN_SW);
+
+  // 0 pulsado -- 1 no pulsado
+  Serial.print( " SW (Boton joystick):");
+  Serial.print( change );
+  Serial.println();
+
+  // Queremos cambiar
+  if (change == 1){
+
+    // Si estabamos en automatico, mandamos mensaje de cancelacion
+    if (automatic){
+      serial_out(400);
+      digitalWrite(LED_BUILTIN, LOW); // Apagamos el LED
+
+      Serial.print( "====================================");
+      Serial.print( "Cancelando. Volviendo a modo manual.");
+      Serial.print( "====================================");
+
+    }
+    else{
+      Serial.print( "============================");
+      Serial.print( "Entrando a modo automatico.");
+      Serial.print( "============================");
+
+      digitalWrite(LED_BUILTIN, HIGH); // Encendemos el LED
+    }
+
+    automatic = !automatic;
+
+
+    delay(1000);
+  }
+
+}
+
+
+
+/////////////////////////////////////
+/////// FUNCIONES PRINCIPALES ///////
+/////////////////////////////////////
+
+// Inicializaciones
 void setup(){
   
   // inicializar monitor serie a 9600 baudios
@@ -27,7 +185,7 @@ void setup(){
   analogReference(DEFAULT);
 
   //  Configuramos pin del pulsador del joystick como entrada con pullup
-  pinMode( PIN_SW, INPUT_PULLUP );
+  pinMode(PIN_SW, INPUT_PULLUP);
   pinMode(PIN_VRx, INPUT); // Configurar el pin como entrada
   pinMode(PIN_VRx, INPUT); // Configurar el pin como entrada
 
@@ -35,99 +193,38 @@ void setup(){
 
 	//Enlazamos el motor exterior al pin PIN_SERVO_EXT
 	servoExterior.attach(PIN_SERVO_EXT);
-  servoExterior.write(130);
+  servoExterior.write(central_external_servo);
 
 	//Enlazamos el motor interior al pin PIN_SERVO_INT
 	servoInterior.attach(PIN_SERVO_INT);
-  servoInterior.write(123);
-  
-
-  
-  
+  servoInterior.write(central_internal_servo);
 }
 
+
+// Bucle principal
 void loop(){
-  
 
-  
-  /*
-  // Lectura de caracteres desde el pc
-  if (Serial.available()) {
-    int key = Serial.read(); // Lee la tecla presionada
-    
-    // Realiza acciones basadas en la tecla presionada
-    switch (key) {
-      case 'w' :
-         Serial.print( "ARRIBA \n" );
-         y_ang = 110;
-        break;
-      case 'a' :
-        Serial.print( "IZQUIERDA \n" );
-        x_ang = 190;
-        // Hacer algo cuando se presiona la tecla 'b'
-        break;
-      case 's' :
-        Serial.print( "ABAJO \n" );
-        y_ang = 70;
-        // Hacer algo cuando se presiona la tecla 'a'
-        break;
-      case 'd' :
-        Serial.print( "DERECHA \n" );
-        x_ang = 45;
-        // Hacer algo cuando se presiona la tecla 'b'
-        break;
-      case ' ':
-        x_ang = 130;
-        y_ang = 90;
-        // Hacer algo cuando se presiona la tecla 'b'
-        break;
-      default:
-        
-        break;
-      // Agrega más casos según las teclas que quieras detectar
-    }
+  check_change_button();
+
+  if (!automatic){
+
+    manual_move();
   }
-  */
-  ///// PUNTOS CLAVE:
-  //x_ang = 130 --> horizontal
-  //x_ang = 45 --> inclin borde mas proximo (der si lo miras de frente)
-  //x_ang = 180 --> inclin lado contrario (izq si lo miras de frente)
+  else {
 
+    automatic_move();
 
+    Serial.print( "=========================");
+    Serial.print( "Volviendo a modo manual.");
+    Serial.print( "=========================");
 
-  // Posiciones del joystick
-  x = analogRead(PIN_VRx);
-  y = analogRead(PIN_VRy);
-  // Mapeo de los valores a grados (0-180)
-
-  
-  x_ang = map( x, 0, 1023, 45, 180 );
-  y_ang = map( y, 0, 1023, 140, 100 );
-  //y_ang = 100;//120 centro
-
-  //Print de los valores en monitor serie
-  
-  Serial.print( "X_ang:" );
-  Serial.print(x);
-  Serial.print("  ");
-
-  Serial.print( "Y_ang:" );
-  Serial.print(y);
-
-  // 0 pulsado -- 1 no pulsado
-  Serial.print( " SW (Boton joystick):");
-  Serial.print( digitalRead(PIN_SW) );
-  Serial.println();
-  
-
-	//Desplazar motor exterior a x_angº
-	
-  servoExterior.write(x_ang);
-  servoInterior.write(y_ang);
-  
+    automatic = false;
+    serial_out(400);
+    digitalWrite(LED_BUILTIN, LOW); // Apagamos el LED
+  }
 
   //Esperar 1/4 de segundo (en milisegundos)
-	//delay(2000);
+	//delay(500);
   
 
 }
