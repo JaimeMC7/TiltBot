@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 
 img_folder = "imagenes/"
-img_name = "img1"
+img_name = "foto17"
 
 
 #########################################################################

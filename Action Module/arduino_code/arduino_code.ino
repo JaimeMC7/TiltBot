@@ -21,7 +21,7 @@ int central_internal_servo = 123;
 
 
 // Modo de juego
-bool automatic = true;
+bool automatic = false;
 
 
 
@@ -35,9 +35,12 @@ bool automatic = true;
 //
 void serial_out(int value){
 
-  StaticJsonDocument<200> jsonDoc;
-  jsonDoc["value"] = value;
-  serializeJson(jsonDoc, Serial);
+  //StaticJsonDocument<200> jsonDoc;
+  //jsonDoc["value"] = value;
+  //serializeJson(jsonDoc, Serial);
+
+  Serial.print(value);
+  Serial.println();
 
 }
 
@@ -73,11 +76,11 @@ void automatic_move(){
         int x_value = jsonDoc["x_value"];
         int y_value = jsonDoc["y_value"];
 
-        Serial.print("Received values: {x_value: ");
-        Serial.print(x_value);
-        Serial.print(", y_value: "); 
-        Serial.print(y_value);
-        Serial.println();
+        //Serial.print("Received values: {x_value: ");
+        //Serial.print(x_value);
+        //Serial.print(", y_value: "); 
+        //Serial.print(y_value);
+        //Serial.println();
 
         int x_ang = map( x_value, -1, 1, 45, 180 );
         int y_ang = map( y_value, -1, 1, 140, 100 );
@@ -113,12 +116,14 @@ void manual_move(){
 
   //Print de los valores en monitor serie
   
+  /*
   Serial.print( "Joystick x value:" );
   Serial.print(x);
   Serial.print("  ");
 
   Serial.print( "Joystick y value:" );
   Serial.print(y);
+  */
   
   //Desplazar servomotores
   move(x_ang, y_ang);
@@ -138,37 +143,42 @@ void check_change_button(){
   int change = digitalRead(PIN_SW);
 
   // 0 pulsado -- 1 no pulsado
+  /*
   Serial.print( " SW (Boton joystick):");
   Serial.print( change );
   Serial.println();
+  */
 
   // Queremos cambiar
-  if (change == 1){
+  if (change == 0){
 
     // Si estabamos en automatico, mandamos mensaje de cancelacion
     if (automatic){
       serial_out(400);
       digitalWrite(LED_BUILTIN, LOW); // Apagamos el LED
 
+      /*
       Serial.print( "====================================");
       Serial.print( "Cancelando. Volviendo a modo manual.");
       Serial.print( "====================================");
-
+      */
+      automatic = false;
     }
     else{
+      /*
       Serial.print( "============================");
       Serial.print( "Entrando a modo automatico.");
       Serial.print( "============================");
+      */
 
-      digitalWrite(LED_BUILTIN, HIGH); // Encendemos el LED
+      automatic = true;
     }
 
-    automatic = !automatic;
+    //automatic = !automatic;
 
 
     delay(1000);
   }
-
 }
 
 
@@ -189,6 +199,7 @@ void setup(){
   pinMode(PIN_VRx, INPUT); // Configurar el pin como entrada
   pinMode(PIN_VRx, INPUT); // Configurar el pin como entrada
 
+  pinMode(LED_BUILTIN, OUTPUT);
 
 
 	//Enlazamos el motor exterior al pin PIN_SERVO_EXT
@@ -204,27 +215,34 @@ void setup(){
 // Bucle principal
 void loop(){
 
-  check_change_button();
-
+  
   if (!automatic){
-
-    manual_move();
+    serial_out(200);
+    //Serial.print( "manual");
+    //Serial.println();
+    //manual_move();
   }
   else {
 
-    automatic_move();
+    //automatic_move();
 
-    Serial.print( "=========================");
-    Serial.print( "Volviendo a modo manual.");
-    Serial.print( "=========================");
+    //Serial.print( "=========================");
+    //Serial.print( "Volviendo a modo manual.");
+    //Serial.print( "=========================");
 
-    automatic = false;
+    //automatic = false;
     serial_out(400);
-    digitalWrite(LED_BUILTIN, LOW); // Apagamos el LED
+    digitalWrite(LED_BUILTIN, HIGH); // Apagamos el LED
   }
 
+  check_change_button();
+  //Serial.print("Automatic= ");
+  //Serial.print(automatic);
+  //Serial.println();
+
+
   //Esperar 1/4 de segundo (en milisegundos)
-	//delay(500);
+	delay(1000);
   
 
 }
