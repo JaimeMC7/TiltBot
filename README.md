@@ -1,5 +1,5 @@
 # TiltBot
-![TiltBot-image](Images/TiltBot.jpg)
+<img src="Images/tiltbot5.jpg" alt="TiltBot-image" width="600"/>
 
 
 ## Index
@@ -65,16 +65,56 @@ All of this is interconected by an Arduino UNO R3 module.
 
 
 ### Vision Module
+The vision module is responsible for the automated maze-solving part. When requested, it will take a photograph of the maze from above and find a path from a starting point to an endpoint. It will then give instructions to the action module to try to move the ball along the path.
+
 #### Vision Hardware
+The hardware part is very simple. It consists of a Raspberry Pi 3B+ connected to a camera positioned above the center of the maze, and also connected to an Arduino UNO R3.
+
+<img src="Images/vision-module-raspberry-and-cam.jpg" alt="Raspberry-and-cam" width="600"/>
 
 
 #### Vision Software
-*Dependencies*:
-- OpenCV/cv2
-- Numpy
+The software part is more complex.
+
+*Dependencies*
+
+To work with images, we use the OpenCV library and Numpy to handle the structures. 
+Then, for the connection between the Raspberry Pi and the Arduino, we use the serial library along with the json library for sending information.
+
+*Installation*
+
+- pip install opencv
+- pip install numpy
+- pip install pyserial
+- pip install json
+
+
+The code waits for a start signal from the Arduino to begin the resolution algorithm. When it receives the signal, it takes a photograph of the maze, detects the walls, the starting point, and the ending point, and searches for a possible path that follows the walls.
+
+
+<img src="Images/laberinth-photo.png" alt="initial laberinth photo" width="300"/>
+<p>initial laberinth photo</p>
+
+
+<img src="Images/laberinth-separated-by-colors.png" alt="color separation" height="300"/>
+<p>laberinth separated by colors</p>
+
+
+<img src="Images/final-laberinth-path.png" alt="final laberinth path" width="300"/>
+<p>final laberinth path</p>
+
+
+This path is calculated considering that when the maze is tilted, the ball will move to the nearest wall in that direction.
 
 #### Vision Limitations
+The pathfinding algorithm uses the walls to move the ball to the end. For this reason, there are some maze layouts that it is unable to solve, which are those where there is no way to access the final area through the walls. An example it cannot solve is the following.
 
+The rest of the cases work correctly, at least on perfect images.
+
+<img src="Images/unresolvable-maze.jpg" alt="Unresolvable maze" width="300"/>
+
+
+However, when applying the algorithm to real images, it does not work in 100% of the cases. Through testing, we have concluded that this is due to, among other things, imperfections in the materials/structure.
 
 ## TO DOs
 - [x] Design and assembly of the structure.
