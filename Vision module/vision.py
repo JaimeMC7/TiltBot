@@ -1,14 +1,11 @@
 
-import d_star_lite as ds
-
 import copy
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 
 
-img_folder = "imagenes/"
-img_name = "foto17"
+img_folder = "/home/sergio/Vision_module/imagenes/"
+img_name = "prueba"
 
 
 #########################################################################
@@ -18,6 +15,9 @@ def separador_colores(original_img_path):
     # Leer la imagen
     image = cv2.imread(original_img_path)
     image = cv2.resize(image, (200, 200))
+    
+    grosor = 6
+    kernel = np.ones((grosor, grosor), np.uint8)
 
 
     # Convertir la imagen a espacio de color HSV
@@ -28,38 +28,49 @@ def separador_colores(original_img_path):
     upper_blue = np.array([140, 255, 255])
 
     # Definir rangos para el color rojo
-    lower_red1 = np.array([0, 150, 50])
+    #lower_red1 = np.array([0, 150, 50])
+    #upper_red1 = np.array([10, 255, 255])
+    #lower_red2 = np.array([170, 150, 50])
+    #upper_red2 = np.array([180, 255, 255])
+
+    lower_red1 = np.array([0, 50, 50])
     upper_red1 = np.array([10, 255, 255])
-    lower_red2 = np.array([170, 150, 50])
+    lower_red2 = np.array([170, 50, 50])
     upper_red2 = np.array([180, 255, 255])
 
     # Definir rangos para el color verde
-    lower_green = np.array([40, 150, 50])
-    upper_green = np.array([80, 255, 255])
+    #lower_green = np.array([40, 150, 50])
+    #upper_green = np.array([80, 255, 255])
+    
+    lower_green = np.array([30, 50, 50])
+    upper_green = np.array([85, 255, 255])
 
-    # Definir rangos para el color negro
-    lower_black = np.array([0, 0, 0])
-    upper_black = np.array([180, 255, 30])  # Valores bajos en el canal V
 
     # Crear una máscara para el color azul
     mask_blue = cv2.inRange(hsv_image, lower_blue, upper_blue)
+    
+    mask_blue = cv2.erode(mask_blue, kernel, iterations=1)
+    mask_blue = cv2.dilate(mask_blue, kernel, iterations=1)
 
     # Crear una máscara para el color rojo (dos rangos por la naturaleza circular del color rojo en HSV)
     mask_red1 = cv2.inRange(hsv_image, lower_red1, upper_red1)
     mask_red2 = cv2.inRange(hsv_image, lower_red2, upper_red2)
     mask_red = cv2.bitwise_or(mask_red1, mask_red2)
+    
+    mask_red = cv2.erode(mask_red, kernel, iterations=1)
+    mask_red = cv2.dilate(mask_red, kernel, iterations=1)
 
     # Crear una máscara para el color verde
     mask_green = cv2.inRange(hsv_image, lower_green, upper_green)
-
-    # Crear una máscara para el color negro
-    mask_black = cv2.inRange(hsv_image, lower_black, upper_black)
+    
+    mask_green = cv2.erode(mask_green, kernel, iterations=1)
+    mask_green = cv2.dilate(mask_green, kernel, iterations=1)
+    
 
     # Guardar las imágenes resultantes
     cv2.imwrite(img_folder + 'blue_binary_img.png', mask_blue)
     cv2.imwrite(img_folder + 'red_binary_img.png', mask_red)
     cv2.imwrite(img_folder + 'green_binary_img.png', mask_green)
-    cv2.imwrite(img_folder + 'black_binary_img.png', mask_black)
 
 
 ####################################################
@@ -115,7 +126,7 @@ def encontrar_y_marcar_centroide(imagen_path, output_path):
 #######################################
 ###### ENGORDA LAS ZONAS BLANCAS ######
 #######################################
-def ensanchar_zona(imagen_path, output_path, grosor=10):
+def ensanchar_zona(imagen_path, output_path, grosor=16):
     # Leer la imagen en escala de grises
     binary_image = cv2.imread(imagen_path, cv2.IMREAD_GRAYSCALE)
     print("Ensanchar_zona, zona roja shape: ", binary_image.shape)
@@ -125,6 +136,14 @@ def ensanchar_zona(imagen_path, output_path, grosor=10):
         kernel = np.ones((grosor, grosor), np.uint8)
         binary_image = cv2.dilate(binary_image, kernel, iterations=1)
         binary_image = cv2.erode(binary_image, kernel, iterations=1)
+        
+        kernel = np.ones((grosor*2, 4), np.uint8)
+        binary_image = cv2.dilate(binary_image, kernel, iterations=1)
+        binary_image = cv2.erode(binary_image, kernel, iterations=1)        
+        
+        kernel = np.ones((4, grosor*2), np.uint8)
+        binary_image = cv2.dilate(binary_image, kernel, iterations=1)
+        binary_image = cv2.erode(binary_image, kernel, iterations=1)        
 
     # Guardar la imagen
     binary_image = cv2.resize(binary_image, (200, 200))
@@ -132,93 +151,6 @@ def ensanchar_zona(imagen_path, output_path, grosor=10):
 
     # Devolver la imagen
     return binary_image
-
-
-
-##################
-#### [UNUSED] ####
-###################################################
-###### FUNCION DONDE SE HACE Todo EL PROCESO ######
-###################################################
-def prueba_vision_dijkstralite():
-    ## Leemos la imagen original con los colores mezclados, y la separamos 
-    ##  en diferentes imagenes, 1 imagen binaria por color.
-    ## 
-    ## Las imagenes finales son: (blue/red/green)_binary_img.png
-    separador_colores("img2.png")
-    
-    ### Leemos las imagenes binarias de los colores y las reescalamos a 200x200 
-    ##  (para reducir el futuro computo)
-    b_img = cv2.imread('blue_binary_img.png')
-    b_gray_image = cv2.cvtColor(b_img, cv2.COLOR_BGR2GRAY)
-    b_gray_image = cv2.resize(b_gray_image, (200, 200))
-    cv2.imwrite('b_gray_image.png', b_gray_image)
-
-    r_img = cv2.imread('red_binary_img.png')
-    r_gray_image = cv2.cvtColor(r_img, cv2.COLOR_BGR2GRAY)
-    r_gray_image = cv2.resize(r_gray_image, (200, 200))
-    cv2.imwrite('r_gray_image.png', r_gray_image)
-    
-    g_img = cv2.imread('green_binary_img.png')
-    g_gray_image = cv2.cvtColor(g_img, cv2.COLOR_BGR2GRAY)
-    g_gray_image = cv2.resize(g_gray_image, (200, 200))
-    cv2.imwrite('g_gray_image.png', g_gray_image)
-    
-    # Muestra de las imagenes binarias reescaladas 
-    cv2.imshow('Imagen azul binaria nueva', b_gray_image)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()  
-    print(b_gray_image.shape)
-    cv2.imshow('Imagen roja binaria nueva', r_gray_image)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()  
-    print(r_gray_image.shape)
-    cv2.imshow('Imagen verde binaria nueva', g_gray_image)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()  
-    print(g_gray_image.shape)
-    
-
-
-    ## Encontramos el centro de la bola (zona blanca de la imagen binaria azul)
-    start_center_x, start_center_y, radio_bola = encontrar_y_marcar_centroide('b_gray_image.png', 'b_centroid.png')
-
-    if start_center_x is not None and start_center_y is not None:
-        print(f"El centroide de la zona azul está en: ({start_center_x}, {start_center_y})")
-        print(f"Y tiene un radio de: ({radio_bola})")
-    else:
-        print("No se encontraron zonas blancas en la imagen.")
-    
-    ## Encontramos el centro de la zona destino (zona blanca de la imagen binaria verde)
-    finish_center_x, finish_center_y, radio_final = encontrar_y_marcar_centroide('g_gray_image.png', 'g_centroid.png')
-
-    if finish_center_x is not None and finish_center_y is not None:
-        print(f"El centroide de la zona verde está en: ({finish_center_x}, {finish_center_y})")
-        print(f"Y tiene un radio de: ({radio_final})")
-    else:
-        print("No se encontraron zonas blancas en la imagen.")
-    
-
-
-    ## Encontramos el perimetro de la zona blanca (de la imagen binara de la parte originalmente roja)
-    zona_ensanchada = ensanchar_zona('r_gray_image.png', 'red_zone.png', int(radio_bola))
-
-
-
-    
-    # Muestra del perimetro encontrado de las zonas rojas
-    cv2.imshow('Zona ensanchada', zona_ensanchada)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    red_zone_contourns = extract_internal_contours("red_zone.png")
-    cv2.imwrite('red_zone_contourns.png', red_zone_contourns)
-
-    ## PASAR LOS PUNTOS DEL PERIMETRO DE LA ZONA ROJA BINARIA A OBSTACULOS, 
-    ##  Y PONER EL PUNTO INICIO (AZUL BIN) Y FINAL (VERDE BIN) 
-    ds.dijkstraLite("red_zone_contourns.png", [start_center_x, start_center_y], [finish_center_x, finish_center_y], True) 
-    #ds.dijkstraLiteExample()
-
 
 
 
@@ -230,8 +162,8 @@ def prueba_alg_paredes():
     ##  en diferentes imagenes, 1 imagen binaria por color.
     ## 
     ## Las imagenes finales son: (blue/red/green)_binary_img.png
-    img_path = "img.png"
-
+    img_path = "/home/sergio/Vision_module/img.png"
+    
     separador_colores(img_path)
     
     ### Leemos las imagenes binarias de los colores y las reescalamos a 200x200 
@@ -250,22 +182,6 @@ def prueba_alg_paredes():
     g_gray_image = cv2.cvtColor(g_img, cv2.COLOR_BGR2GRAY)
     g_gray_image = cv2.resize(g_gray_image, (200, 200))
     cv2.imwrite(img_folder + 'g_gray_image.png', g_gray_image)
-    
-    """
-    # Muestra de las imagenes binarias reescaladas 
-    cv2.imshow('Imagen azul binaria nueva', b_gray_image)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()  
-    print(b_gray_image.shape)
-    cv2.imshow('Imagen roja binaria nueva', r_gray_image)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()  
-    print(r_gray_image.shape)
-    cv2.imshow('Imagen verde binaria nueva', g_gray_image)
-    cv2.waitKey(0)  
-    cv2.destroyAllWindows()  
-    print(g_gray_image.shape)
-    """
     
 
 
@@ -291,25 +207,6 @@ def prueba_alg_paredes():
     ## Ensanchamos la zona blanca
     zona_ensanchada = ensanchar_zona(img_folder + 'r_gray_image.png', img_folder + 'red_zone.png', int(radio_bola))
     cv2.imwrite(img_folder + 'red_thick_zone.png', zona_ensanchada)
-
-
-    ### Sumar "ciruclo de inicio" a la imagen binaria de las paredes
-    #zona_ensanchada = zona_ensanchada + b_gray_image
-
-
-    """
-    # Muestra del perimetro encontrado de las zonas rojas
-    cv2.imshow('Zona ensanchada', zona_ensanchada)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
-
-
-    ##### NO SE UTILIZA, POR AHORA [UNUSED]
-    #red_zone_contourns = extract_internal_contours(img_folder + "red_zone.png")
-    #cv2.imwrite(img_folder + 'red_zone_contourns.png', red_zone_contourns)
-
-
 
 
 
@@ -448,68 +345,11 @@ def identify_corners(wall_img, img_corners, coord_bola, coord_final):
     closest_corner_to_start = punto_mas_cercano(wall_img, ext_corners, coord_bola)
     closest_corner_to_end = punto_mas_cercano(wall_img, ext_corners, coord_final)
 
-    """
-    img_int = np.zeros(img_corners.shape, dtype=np.uint8)
-    for p in int_corners:
-        wall_img[p[0], p[1]] = 0
-        img_int[p[0], p[1]] = 255
-
-    img_ext = np.zeros(img_corners.shape, dtype=np.uint8)
-    for p in ext_corners:
-        wall_img[p[0], p[1]] = 0
-        img_ext[p[0], p[1]] = 255
-
-    # 
-    plt.subplot(1, 4, 1)
-    plt.imshow(wall_img)
-    plt.title('Muros')
-
-    plt.subplot(1, 4, 2)
-    plt.imshow(img_int)
-    plt.title('Esquinas interiores')
-    
-    plt.subplot(1, 4, 3)
-    plt.imshow(img_ext)
-    plt.title('Esquinas exteriores')
-    
-    plt.subplot(1, 4, 4)
-    plt.imshow(img_corners)
-    plt.title('Esquinas')
-
-    plt.show()
-    """
-
-
     print("Bola en: (", coord_bola[0], ", ", coord_bola[1], ")")
     print("Esquina mas cercana en: (", closest_corner_to_start[0], ", ", closest_corner_to_start[1], ")")
 
     print("Final en: (", coord_final[0], ", ", coord_final[1], ")")
     print("Esquina mas cercana en: (", closest_corner_to_end[0], ", ", closest_corner_to_end[1], ")")
-
-    """
-    img_start = np.zeros(img_corners.shape, dtype=np.uint8)
-    img_start[closest_corner_to_start[0], closest_corner_to_start[1]] = 255
-    img_start[coord_bola[0], coord_bola[1]] = 255
-
-    img_end = np.zeros(img_corners.shape, dtype=np.uint8)
-    img_end[closest_corner_to_end[0], closest_corner_to_end[1]] = 255
-    img_end[coord_final[0], coord_final[1]] = 255
-
-    # 
-    plt.subplot(1, 3, 1)
-    plt.imshow(img_start)
-    plt.title('Inicio Esquina Detectada')
-    
-    plt.subplot(1, 3, 2)
-    plt.imshow(img_end)
-    plt.title('Final Esquina Detectada')
-
-    plt.subplot(1, 3, 3)
-    plt.imshow(img_corners)
-    plt.title('Esquinas Detectadas')
-
-    plt.show()
-    """
 
     return int_corners, ext_corners, closest_corner_to_start, closest_corner_to_end
 
@@ -582,7 +422,10 @@ def first_wall_point(wall_img, line_start_p, line_next_p):
     print("******************************")
 
     print("Punto inicio: ", line_start_p, " punto int:", line_next_p)
-
+    
+    if line_start_p == line_next_p:
+        return [-1, -1]
+    
     diff = [0, 0]
     diff[0] = line_next_p[0] - line_start_p[0]
     diff[1] = line_next_p[1] - line_start_p[1]
@@ -591,23 +434,35 @@ def first_wall_point(wall_img, line_start_p, line_next_p):
 
     pos_x = line_next_p[0]
     pos_y = line_next_p[1]
+    
+    aux_value = pos_x
 
 
     if diff[0] == 0:
         axis = 1
-
-    desp = ( diff[axis]/abs(diff[axis]) )
+    
+    try:
+        desp = ( diff[axis]/abs(diff[axis]) )
+    except:
+        print("Error. Division entre 0.")
 
     if axis == 0:
         pos_x = int(pos_x + desp)
     else:
+        aux_value = pos_y
         pos_y = int(pos_y + desp)
-
+    
+    
     while wall_img[pos_x,pos_y] != 255:
         if axis == 0:
             pos_x = int(pos_x + desp)
+            aux_value = pos_x
         else:
             pos_y = int(pos_y + desp)
+            aux_value = pos_y
+        
+        if aux_value >= wall_img.shape[0] or aux_value < 0:
+            return [-1, -1]
     
     if axis == 0:
         pos_x = int(pos_x - desp)
@@ -678,17 +533,10 @@ def encontrar_camino_paredes(original_img, wall_img, int_corners, ext_corners, c
     ## Encontra camino entre puntos (mirar lineas rectas slo hast aencontrar un punto en una direccion)
     ## "Guardar" que inclinacion teniamos (par saber dondeestan las paredes, y como deberia estan mantenida 
     ##  la inclinacion en el lab)
-    grosor = 8
+    grosor = 5
     kernel = np.ones((grosor, grosor), np.uint8)
-    unthik_wall_img = cv2.erode(wall_img, kernel, iterations=1)
-    cv2.imwrite(img_folder + 'red_zone_unthikened.png', unthik_wall_img)
-
-    """
-    # Muestra del perimetro encontrado de las zonas rojas
-    cv2.imshow('Zona des ensanchada', unthik_wall_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
+    unthick_wall_img = cv2.erode(wall_img, kernel, iterations=1)
+    cv2.imwrite(img_folder + 'red_zone_unthickened.png', unthick_wall_img)
 
 
     corners = int_corners + ext_corners
@@ -724,7 +572,7 @@ def encontrar_camino_paredes(original_img, wall_img, int_corners, ext_corners, c
                 print("aqui")
 
 
-            if corner == act_corner or wall_between(unthik_wall_img, act_corner, aligned_corner):
+            if corner == act_corner or wall_between(unthick_wall_img, act_corner, aligned_corner):
                 continue
 
             
@@ -751,7 +599,7 @@ def encontrar_camino_paredes(original_img, wall_img, int_corners, ext_corners, c
             print("Sin camino. Vuelta atras.")
             if len(path) == 1:
                 print("No hay solucion")
-                exit(1)
+                return []
 
             path = path[:-1]
             act_corner = path[-1]
@@ -762,6 +610,9 @@ def encontrar_camino_paredes(original_img, wall_img, int_corners, ext_corners, c
 
             if real_arrived_corner in int_corners:
                 next_corner = first_wall_point(wall_img, act_corner, next_corner)
+                if next_corner == [-1, -1]:
+                    continue
+                
                 real_arrived_corner = next_corner
                 print("First wall point: ", next_corner)
                 
@@ -784,125 +635,23 @@ def encontrar_camino_paredes(original_img, wall_img, int_corners, ext_corners, c
         prev_path = copy.deepcopy(cleaned_path)
         cleaned_path = clean_path(prev_path)
 
-    cleaned_path = [coord_bola, closest_corner_start] + cleaned_path + [coord_final]
+
+    cleaned_path = [coord_bola, closest_corner_start] + cleaned_path
 
 
     print("path limpio:", cleaned_path)
-    #path.append(closest_corner_end)
-    
-    not_cleaned_path_img = copy.deepcopy(red_zone_corners)
-    cleaned_path_img = copy.deepcopy(red_zone_corners)
-
 
     # Dibujar la línea en la imagen
-    act_point = closest_corner_start
-    for point in path:
-        not_cleaned_path_img = dibujar_linea(not_cleaned_path_img, act_point, point)
-        act_point = point
-    
-    # Dibujar la línea en la imagen
-    act_point = closest_corner_start
-    for point in cleaned_path:
-        cleaned_path_img = dibujar_linea(cleaned_path_img, act_point, point)
-        act_point = point
-
-    # Dibujar la línea en la imagen
-    act_point = closest_corner_start
+    act_point = coord_bola
     for point in cleaned_path:
         original_img = dibujar_linea(original_img, act_point, point)
         act_point = point
 
     original_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2RGB)
-    cv2.imwrite('img_with_path.png', original_img)
-    
-    # Crear la figura
-    fig = plt.figure()
-    
-    plt.subplot(1, 3, 1)
-    plt.imshow(not_cleaned_path_img)
-    plt.title('Sin limpiar')
-    
-    plt.subplot(1, 3, 2)
-    plt.imshow(cleaned_path_img)
-    plt.title('Limpiado')
-
-    plt.subplot(1, 3, 3)
-    plt.imshow(original_img)
-    plt.title('Res final')
-
-    # Guardar la figura en una imagen
-    fig.savefig('Results/res-'+ img_name + '.png')
-
-    plt.show()
-
-    """
-    # Mostrar la nueva imagen con puntos
-    plt.imshow(not_cleaned_path_img, cmap='gray')
-    plt.title('Camino')
-    plt.axis('off')
-    plt.show()
-
-    """
+    cv2.imwrite("/home/sergio/Vision_module/img_with_path.png", original_img)
 
     return cleaned_path
     
-##############################################################
-#### Funciones para intentar quitar reflejos (no van aun) ####
-##############################################################
-def smallest_bounding_square(image):
-    # Convertir la imagen a escala de grises si es necesario
-    if len(image.shape) > 2:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image
-
-    # Binarizar la imagen
-    _, thresh = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY)
-
-    # Encontrar los límites superior, inferior, izquierdo y derecho de las áreas blancas
-    coords = np.column_stack(np.where(thresh > 0))
-    top_left = np.min(coords, axis=0)
-    bottom_right = np.max(coords, axis=0)
-
-    # Calcular las coordenadas del cuadrado de menor tamaño
-    x, y = top_left
-    w, h = bottom_right - top_left
-
-    return (x, y, w, h)
-
-
-def detect_white_except_in_roi(image, x, y, w, h):
-    # Convertir la imagen a escala de grises si es necesario
-    if len(image.shape) > 2:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image
-
-    # Mostrar la imagen con el rectángulo dibujado
-    cv2.imshow('Img gris ', gray)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    # Binarizar la imagen para obtener solo el color blanco
-    _, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
-
-    print("thresh:", thresh)
-
-    # Crear una máscara para el área de interés (ROI)
-    mask_roi = np.zeros_like(thresh)
-    mask_roi[y:y+h, x:x+w] = 255
-
-    # Aplicar la máscara inversa para excluir el área de interés
-    mask = cv2.bitwise_not(mask_roi)
-
-    # Aplicar la máscara para obtener solo el color blanco fuera del área de interés
-    white_except_in_roi = cv2.bitwise_and(thresh, thresh, mask=mask)
-
-    return white_except_in_roi
-
-##############################################################
-
-
 ##################################################
 ###### ENCUENTRA LAS ESQUINAS DEL LABERINTO ######
 ##################################################
@@ -953,79 +702,20 @@ def main():
 
     ### Leemos las imagenes binarias de los colores y las reescalamos a 200x200 
     ##  (para reducir el futuro computo)
-    img_path = 'imagenes/originales/' + img_name + '.jpg'
-
+    img_path = "/home/sergio/Vision_module/imagenes/originales/" + img_name + ".jpg"
+    
     img = cv2.imread(img_path)
+    print("len img antes:", img.shape)
+    
+    img = img[:,200:img.shape[1]-600, :]
+    print("len img despues:", img.shape)
+    
     img = cv2.resize(img, (200, 200))
-    cv2.imwrite('img.png', img)
+    cv2.imwrite("/home/sergio/Vision_module/img.png", img)
 
     #prueba_vision_dijkstralite()
     path = prueba_alg_paredes()
+    print("Post algoritmo")
     return path
-
-    #########
-    #### Intento de quitar reflejos (no va)
-    #########
-    """
-    separador_colores(img_path)
-    # Ejemplo de uso
-    image = cv2.imread("imagenes/black_binary_img.png")
-    x, y, w, h = smallest_bounding_square(image)
-    print("Rectángulo delimitador más pequeño:", (x, y, w, h))
-    # Dibujar el rectángulo en la imagen
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-    # Mostrar la imagen con el rectángulo dibujado
-    cv2.imshow('Rectángulo delimitador más pequeño', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    image = cv2.imread("img.png")
-    # Detectar el color blanco excepto dentro del área delimitada
-    white_except_in_roi = detect_white_except_in_roi(image, x, y, w, h)
-
-    # Mostrar la imagen resultante
-    cv2.imshow('Blanco excepto en ROI', white_except_in_roi)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    """
-    
-
-    
-
-    
-
-def test_text_path():
-    cleaned_path = [[140, 68], [140, 186], [16, 186]]
-
-    closest_corner_start = [184 ,  68 ] 
-    closest_corner_start = [184 ,  68 ]
-
-    
-    original_img = cv2.imread('img.png')
-    original_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2RGB)
-
-
-    # Dibujar la línea en la imagen
-    act_point = closest_corner_start
-    for point in cleaned_path:
-        original_img = dibujar_linea(original_img, act_point, point)
-        act_point = point
-
-    
-    # Crear la figura
-    fig = plt.figure()
-    
-    plt.subplot(1, 1, 1)
-    plt.imshow(original_img)
-    plt.title('Sin limpiar')
-
-    # Guardar la figura en una imagen
-    #fig.savefig('Results/res-'+ img_name + '.png')
-
-    plt.show()
-    
-
-
 
 

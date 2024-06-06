@@ -16,8 +16,8 @@ Servo servoExterior;
 Servo servoInterior;
 
 // Valores centrales servomotores
-int central_external_servo = 130;
-int central_internal_servo = 123;
+int central_external_servo = 129;
+int central_internal_servo = 121;
 
 
 // Modo de juego
@@ -33,6 +33,9 @@ bool automatic = false;
 //   300 --> siguiente punto
 //   400 --> cancelar/acabar proceso
 //
+
+
+
 void serial_out(int value){
 
   //StaticJsonDocument<200> jsonDoc;
@@ -59,20 +62,22 @@ void automatic_move(){
 
   while (automatic){
 
+    check_change_button();
+
     if (Serial.available() > 0) {
 
       String receivedString = Serial.readStringUntil('\n');
       StaticJsonDocument<200> jsonDoc;
       DeserializationError error = deserializeJson(jsonDoc, receivedString);
-
+      
       if (!error) {
         int state = jsonDoc["state"];
 
         if (state == 400){ 
+          automatic = false;
           break;
         } 
         // else: ended == 200
-    
         int x_value = jsonDoc["x_value"];
         int y_value = jsonDoc["y_value"];
 
@@ -89,13 +94,34 @@ void automatic_move(){
         move(x_ang, y_ang);
         delay(2000);
 
-        // Recolocamos
-        move(central_external_servo, central_internal_servo);
+        // Recolocamos poco a poco
+        int step = 1;
+        if (y_ang > central_internal_servo){
+          step = -1;
+        } 
+
+        x_value = 0;
+        y_value = 0; 
+        x_ang = map( x_value, -1, 1, 45, 180 );
+
+        y_ang = y_ang + step;
+        while (y_ang != central_internal_servo){
+          move(x_ang, y_ang);
+          y_ang = y_ang + step;
+          delay(200);
+        }
+        
         delay(500);
 
         // Decimos que continuamos
         serial_out(300);
       }
+      else {
+
+        //Serial.print("error");
+      }
+
+      
 
     }
 
@@ -111,7 +137,13 @@ void manual_move(){
   // Mapeo de los valores a grados (0-180)
 
   int x_ang = map( x, 0, 1023, 45, 180 );
-  int y_ang = map( y, 0, 1023, 140, 100 );
+
+  int y_ang = map( y, 0, 512, 138, 119 );
+  if (y > 512){
+     y_ang = map( y, 512, 1023, 119, 110 );
+  }
+
+  
   //y_ang = 100; //120 centro; //140
 
   //Print de los valores en monitor serie
@@ -217,21 +249,21 @@ void loop(){
 
   
   if (!automatic){
-    serial_out(200);
+    //serial_out(200);
     //Serial.print( "manual");
     //Serial.println();
-    //manual_move();
+    manual_move();
   }
   else {
 
-    //automatic_move();
+    automatic_move();
 
     //Serial.print( "=========================");
     //Serial.print( "Volviendo a modo manual.");
     //Serial.print( "=========================");
 
     //automatic = false;
-    serial_out(400);
+    //serial_out(400);
     digitalWrite(LED_BUILTIN, HIGH); // Apagamos el LED
   }
 
@@ -242,7 +274,7 @@ void loop(){
 
 
   //Esperar 1/4 de segundo (en milisegundos)
-	delay(1000);
+	//delay(1000);
   
 
 }
