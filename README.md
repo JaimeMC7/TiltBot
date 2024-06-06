@@ -62,7 +62,15 @@ All of this is interconected by an Arduino UNO R3 module.
 
 
 #### Action Software
+To make the servo motors move, we have implemented some simple code in the Arduino.
+This require the following libraries:
+- Servo.h
+- Keyboard.h
+- ArduinoJson.h
 
+The code workflow is:
+
+<img src="Images/action_module_sw_diagram.png" alt="action_module_sw_diagram" width="300"/>
 
 ### Vision Module
 The vision module is responsible for the automated maze-solving part. When requested, it will take a photograph of the maze from above and find a path from a starting point to an endpoint. It will then give instructions to the action module to try to move the ball along the path.
@@ -91,17 +99,17 @@ Then, for the connection between the Raspberry Pi and the Arduino, we use the se
 
 The code waits for a start signal from the Arduino to begin the resolution algorithm. When it receives the signal, it takes a photograph of the maze, detects the walls, the starting point, and the ending point, and searches for a possible path that follows the walls.
 
-
-<img src="Images/laberinth-photo.png" alt="initial laberinth photo" width="300"/>
 <p>initial laberinth photo</p>
+<img src="Images/laberinth-photo.png" alt="initial laberinth photo" width="300"/>
 
 
-<img src="Images/laberinth-separated-by-colors.png" alt="color separation" height="300"/>
 <p>laberinth separated by colors</p>
+<img src="Images/laberinth-separated-by-colors.png" alt="color separation" height="300"/>
 
 
-<img src="Images/final-laberinth-path.png" alt="final laberinth path" width="300"/>
 <p>final laberinth path</p>
+<img src="Images/final-laberinth-path.png" alt="final laberinth path" width="300"/>
+
 
 
 This path is calculated considering that when the maze is tilted, the ball will move to the nearest wall in that direction.
