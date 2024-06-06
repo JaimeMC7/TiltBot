@@ -41,14 +41,16 @@ The structure is one of the most important parts of this project.
 For the operation of TiltBot, we have divided its components into two interconnected modules.
 
 ### Action Module
-This module is the one in charged of the actual movement of the laberinth that allows the puzzle to be solved.
+This module is the one in charge of the actual movement of the laberinth that allows the puzzle to be solved.
 
 #### Action Hardware
 In order to move the structure, we make use of two different servo motors, one for the outer layer, and the other for the inner layer. Each of this servos move in different directions, allowing the structure to tilt in any angle needed. For a deeper understanding check [Structure](#Structure).
 
 To be able to control manually this servos we have also connected a joystick, which moves both motors acordingly to the direction and amount of preassure applied on it.
 
-All of this is interconected by an Arduino R3 module.
+All of this is interconected by an Arduino UNO R3 module.
+
+
 <img src="Action Module/Action Module circuit v1.png" alt="Action-module-HW-components" width="600" height="400">
 
 
