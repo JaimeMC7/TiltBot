@@ -75,12 +75,12 @@ Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos 
 - [x] Calibrar rangos de desplazamiento de los servomotores de la plataforma del laberinto.
   - [x] En el codigo
   - [x] Fisicamente 
-- [ ] Módulo de visión.
+- [x] Módulo de visión.
   - [x] Diferenciar obstaculos, bola y camino del laberinto con cámara.
   - [x] Algoritmo basico para resolver el laberinto.
-  - [ ] Mejorar el algoritmo de resolución.
-  - [ ] Calibrar ordenes para desplazar la bola en la dirección correcta.
-- [ ] Comunicación entre modulo de visión y de acción
+  - [x] Mejorar el algoritmo de resolución.
+  - [x] Calibrar ordenes para desplazar la bola en la dirección correcta.
+- [x] Comunicación entre modulo de visión y de acción
 
 
 ## Referencias
