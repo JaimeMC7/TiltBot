@@ -28,13 +28,20 @@ If crossing the maze is too difficult, TiltBot has an extra feature. You can swi
 Additionally, to increase the amount of fun, the maze format can be customized. You can open or close holes, as well as restructure the walls to choose your own difficulty.
 
 ## Structure
-The structure is one of the most important parts of this project.
+The structure is one of the most important parts of this project. To create a customizable maze, we had to come up with a structure that would allow us to rearrange where the walls that delimit the path of the maze should be, and the holes through which it should avoid falling. We designed the platform of our maze with holes where different pieces of walls fit and holes where plugs fit that allow the ball to pass over it. In addition to this, the structure has an exterior frame that will allow the platform to rotate on an axis. This has been achieved by means of a servomotor that will be attached to this frame by means of an elongated metal plate. As for the movement in the other axis of the inner platform, we have placed another servo attached to the bottom of the inner platform of the maze and joined to the outer frame by another plate. This allows us to obtain the desired movement in both axes.
+
+<img src="Images/3D-platform-and-walls.jpg" alt="3D-platform-and-walls" width="400" height="300">
 
 #### Laberinth platform
+<img src="Images/3D-platform.jpg" alt="3D-platform" width="300" height="400">
+We made a platform that has nine main isles of floor. Among them, four central X-shaped holes remain in the center of the platform, and eight small holes are located on the exterior side. Also, each piece of the floor has four holes in it, that can be fitted with our plugs in order to make the maze either easier or harder.
+
 
 #### Walls and plugs
+<img src="Images/3D-wall-pieces.jpg" alt="3D-wall-pieces" width="300" height="400">
+We have designed different types of central walls, combining parts at ground level that let us create very varied mazes. For the exterior walls, we only have two types, ground level and wall lavel. Regarding the plugs, they are all the same, and they are of such a height that allows the ball to pass over it effortlessly.
 
-####  
+#### 
 
 
 ## Arquitecture
