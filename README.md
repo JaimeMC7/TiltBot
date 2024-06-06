@@ -2,55 +2,45 @@
 ![TiltBot-image](Images/TiltBot.jpg)
 
 
-## Indíce
-- [Descripción del proyecto](#Descripción-del-proyecto)
-- [Estructura](#Estructura)
-  - [Plataforma del laberinto](#Plataforma-del-laberinto)
-  - [Paredes y tapones](#Paredes-y-tapones)
-- [Arquitectura](#Arquitectura)
-  - [Módulo de acción](#Módulo-de-acción)
+## Index
+- [Project description](#Project-description)
+- [Structure](#Structure)
+  - [Laberinth platform](#Laberinth-platform)
+  - [Walls and plugs](#Walls-and-plugs)
+- [Arquitecture](#Arquitecture)
+  - [Action Module](#Action-Module)
     - [Action Hardware](#Action-Hardware)
     - [Action Software](#Action-Software)
-  - [Módulo de visión](#Módulo-de-visión)
+  - [Vision Module](#Vision-Module)
     - [Vision Hardware](#Vision-Hardware)
     - [Vision Software](#Vision-Software)
-    - [Limitaciones](#Vision-Limitations)
+    - [Limitations](#Vision-Limitations)
 - [TO DOs](#TO-DOs)
-- [Referencias](#Referencias)
+- [References](#References)
 
 
-## Descripción del proyecto
-TitlBot es un dispositivo de entretenimiento en el que has de intentar conseguir 
-llevar una bola desde un lado de un laberinto hasta el lado opuesto, tan solo 
-inclinandolo. Por el camino deberás de ir esquivando los agujeros, ¡o te tocará
-volver a empezar!
-La forma de usarlo es simple: mediante un joystick puedes inclinar la plataforma 
-del laberinto en el que se encuentra la bola. 
+## Project description
+TiltBot is an entertainment device where you try to get a ball from one side of a maze to the opposite side, just by tilting it. Along the way, you'll need to dodge holes, or you'll have to start over!
+Using it is simple: you can tilt the maze platform where the ball is located with a joystick.
 
-Si cruzar el laberinto se te hace dificil, TiltBot tiene una funcionalidad extra. 
-Puedes cambiar a un modo automático, en el que mediante IA 
-se resolverá el laberinto, mostrandote uno de los posibles caminos hacia 
-el final. (Por el momento el algoritmo es algo limitado. Vease en el apartado [Limitaciones](#Vision-Limitations) )
+If crossing the maze is too difficult, TiltBot has an extra feature. You can switch to an automatic mode, where AI will solve the maze, showing you one of the possible paths to the end. (For now, the algorithm is somewhat limited. See the Limitations section.)
 
-Además, para aumentar la cantidad de diversión, el formato del laberinto puede
-personalizarse. Puedes abrir o cerrar agujeros, así como reestructurar las paredes
-para elegir tu propia dificultad.
+Additionally, to increase the amount of fun, the maze format can be customized. You can open or close holes, as well as restructure the walls to choose your own difficulty.
 
+## Structure
+The structure is one of the most important parts of this project.
 
-## Estructura
-La estructura es una de las partes de mayor importancia en este proyecto.
+#### Laberinth platform
 
-#### Plataforma del laberinto
-
-#### Paredes y tapones
+#### Walls and plugs
 
 ####  
 
 
-## Arquitectura
-Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos interconectados
+## Arquitecture
+For the operation of TiltBot, we have divided its components into two interconnected modules.
 
-### Módulo de acción
+### Action Module
 #### Action Hardware
 <img src="Action Module/Action Module circuit v1.png" alt="Action-module-HW-components" width="600" height="400">
 
@@ -58,36 +48,33 @@ Para el funcionamiento de TiltBot hemos dividido sus componentes en dos modulos 
 #### Action Software
 
 
-### Módulo de visión
+### Vision Module
 #### Vision Hardware
 
 
 #### Vision Software
-*Dependencias*:
-- OpenCV/cv2 [MODIFICAR POR LA LIBRERIA USADA]
+*Dependencies*:
+- OpenCV/cv2
 - Numpy
 
 #### Vision Limitations
 
 
 ## TO DOs
-- [x] Diseño y montaje de la estructura.
-- [x] Calibrar rangos de desplazamiento de los servomotores de la plataforma del laberinto.
-  - [x] En el codigo
-  - [x] Fisicamente 
-- [x] Módulo de visión.
-  - [x] Diferenciar obstaculos, bola y camino del laberinto con cámara.
-  - [x] Algoritmo basico para resolver el laberinto.
-  - [x] Mejorar el algoritmo de resolución.
-  - [x] Calibrar ordenes para desplazar la bola en la dirección correcta.
-- [x] Comunicación entre modulo de visión y de acción
+- [x] Design and assembly of the structure.
+- [x] Calibrate the movement ranges of the platform's servomotors.
+  - [x] In the code.
+  - [x] Phisically.
+- [x] Vision Module.
+  - [x] Differentiate obstacles, ball, and maze path using a camera.
+  - [x] Basic algorithm to solve the maze.
+  - [x] Improve the solving algorithm.
+  - [x] Calibrate commands to move the ball in the correct direction.
+- [x] Communication between the vision module and the action module.
 
 
-## Referencias
-- Idea original del proyecto, por Antonio Álvarez: https://www.youtube.com/watch?v=PMSr5L0SD24
-- Tutorial - Uso de Joysticks en Arduino: https://programarfacil.com/blog/arduino-blog/joystick-con-arduino/
-- Tutorial - Uso de Servos en Arduino: https://programarfacil.com/blog/arduino-blog/servomotor-con-arduino/
+## References
+- Original idea for the project by Antonio Álvarez: https://www.youtube.com/watch?v=PMSr5L0SD24
+- Tutorial - Usage of Joysticks with Arduino: https://programarfacil.com/blog/arduino-blog/joystick-con-arduino/
+- Tutorial - Usage of Servos with Arduino: https://programarfacil.com/blog/arduino-blog/servomotor-con-arduino/
 - Tutorial - Send data from Arduino to Raspberry (Serial connection): https://www.youtube.com/watch?v=-3swby4ryU4
-- 
-
-
