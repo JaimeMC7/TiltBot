@@ -5,7 +5,7 @@
 ## Index
 - [Project description](#Project-description)
 - [Structure](#Structure)
-  - [Laberinth platform](#Laberinth-platform)
+  - [Labyrinth platform](#Labyrinth-platform)
   - [Walls and plugs](#Walls-and-plugs)
 - [Arquitecture](#Arquitecture)
   - [Action Module](#Action-Module)
@@ -32,7 +32,7 @@ The structure is one of the most important parts of this project. To create a cu
 
 <img src="Images/3D-platform-and-walls.jpg" alt="3D-platform-and-walls" width="400" height="300">
 
-#### Laberinth platform
+#### Labyrinth platform
 <img src="Images/3D-platform.jpg" alt="3D-platform" width="300" height="400">
 We made a platform that has nine main isles of floor. Among them, four central X-shaped holes remain in the center of the platform, and eight small holes are located on the exterior side. Also, each piece of the floor has four holes in it, that can be fitted with our plugs in order to make the maze either easier or harder.
 
@@ -48,7 +48,7 @@ We have designed different types of central walls, combining parts at ground lev
 For the operation of TiltBot, we have divided its components into two interconnected modules.
 
 ### Action Module
-This module is the one in charge of the actual movement of the laberinth that allows the puzzle to be solved.
+This module is the one in charge of the actual movement of the labyrinth that allows the puzzle to be solved.
 
 #### Action Hardware
 In order to move the structure, we make use of two different servo motors, one for the outer layer, and the other for the inner layer. Each of this servos move in different directions, allowing the structure to tilt in any angle needed. For a deeper understanding check [Structure](#Structure).
@@ -99,15 +99,15 @@ Then, for the connection between the Raspberry Pi and the Arduino, we use the se
 
 The code waits for a start signal from the Arduino to begin the resolution algorithm. When it receives the signal, it takes a photograph of the maze, detects the walls, the starting point, and the ending point, and searches for a possible path that follows the walls.
 
-<p>initial laberinth photo</p>
+<p>initial labyrinth photo</p>
 <img src="Images/laberinth-photo.png" alt="initial laberinth photo" width="300"/>
 
 
-<p>laberinth separated by colors</p>
+<p>labyrinth separated by colors</p>
 <img src="Images/laberinth-separated-by-colors.png" alt="color separation" height="300"/>
 
 
-<p>final laberinth path</p>
+<p>final labyrinth path</p>
 <img src="Images/final-laberinth-path.png" alt="final laberinth path" width="300"/>
 
 
