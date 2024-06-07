@@ -78,7 +78,7 @@ The vision module is responsible for the automated maze-solving part. When reque
 #### Vision Hardware
 The hardware part is very simple. It consists of a Raspberry Pi 3B+ connected to a camera positioned above the center of the maze, and also connected to an Arduino UNO R3.
 
-<img src="Images/vision-module-raspberry-and-cam.jpg" alt="Raspberry-and-cam" width="600"/>
+<img src="Vision module/vision-module-circuit.jpg" alt="Raspberry-and-cam" width="600"/>
 
 
 #### Vision Software
