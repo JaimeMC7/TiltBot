@@ -58,7 +58,7 @@ To be able to control manually this servos we have also connected a joystick, wh
 All of this is interconected by an Arduino UNO R3 module.
 
 
-<img src="Action Module/Action Module circuit v1.png" alt="Action-module-HW-components" width="600" height="400">
+<img src="Images/action-module-circuit.png" alt="Action-module-HW-components" width="600" height="400">
 
 
 #### Action Software
@@ -78,7 +78,7 @@ The vision module is responsible for the automated maze-solving part. When reque
 #### Vision Hardware
 The hardware part is very simple. It consists of a Raspberry Pi 3B+ connected to a camera positioned above the center of the maze, and also connected to an Arduino UNO R3.
 
-<img src="Vision module/vision-module-circuit.jpg" alt="Raspberry-and-cam" width="600"/>
+<img src="vision-module-circuit.jpg" alt="Raspberry-and-cam" width="600"/>
 
 
 #### Vision Software

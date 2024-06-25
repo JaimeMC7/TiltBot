@@ -1,0 +1,65 @@
+@startuml
+skinparam componentStyle rectangle
+
+[Comprobar modo de juego] as Modo
+
+package "Modulo de acción"{
+
+[Detectar movimiento joystick] as Detectar
+[Calcular inclinación del laberinto] as Inclinacion
+[Mover servos en esos ángulos] as MoverManual
+
+
+
+
+[Calcular inclinación a siguiente esquina] as Siguiente
+[Mover servos en esos ángulos] as MoverAuto
+
+}
+
+package "Modulo de visión"{
+
+[Sacar foto del laberinto] as Foto
+[Sacar imágenes binarias] as Binarias
+[Imagen binaria de paredes] as BinParedes
+[Imagen binaria del inicio] as BinInicio
+[Imagen binaria del final] as BinFinal
+[Encontrar esquinas] as Esquinas
+[Encontrar esquina cercana a inicio] as EsquinaInicio
+[Encontrar esquina cercana a final] as EsquinaFinal
+[Calcular camino] as Camino
+
+
+
+}
+
+Modo --> Detectar : " Manual"
+Modo --> Foto : " Automatico"
+
+Detectar --> Inclinacion
+Inclinacion --> MoverManual
+MoverManual --> Detectar
+
+Foto --> Binarias
+Binarias --> BinParedes
+Binarias --> BinInicio
+Binarias --> BinFinal
+BinParedes --> Esquinas
+
+Esquinas --> EsquinaInicio
+BinInicio --> EsquinaInicio
+Esquinas --> EsquinaFinal
+BinFinal --> EsquinaFinal
+
+Esquinas --> Camino
+EsquinaInicio--> Camino
+EsquinaFinal--> Camino
+
+Camino --> Siguiente
+Siguiente --> MoverAuto
+MoverAuto --> Siguiente 
+
+
+
+
+@enduml
