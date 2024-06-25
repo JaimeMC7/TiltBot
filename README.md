@@ -47,6 +47,8 @@ We have designed different types of central walls, combining parts at ground lev
 ## Arquitecture
 For the operation of TiltBot, we have divided its components into two interconnected modules.
 
+<img src="Module diagram/Module diagram.png" alt="Action-module-HW-components" width="400">
+
 ### Action Module
 This module is the one in charge of the actual movement of the labyrinth that allows the puzzle to be solved.
 
@@ -78,7 +80,7 @@ The vision module is responsible for the automated maze-solving part. When reque
 #### Vision Hardware
 The hardware part is very simple. It consists of a Raspberry Pi 3B+ connected to a camera positioned above the center of the maze, and also connected to an Arduino UNO R3.
 
-<img src="vision-module-circuit.jpg" alt="Raspberry-and-cam" width="600"/>
+<img src="Images/vision-module-circuit.jpg" alt="Raspberry-and-cam" width="600"/>
 
 
 #### Vision Software
