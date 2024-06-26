@@ -1,6 +1,11 @@
 # TiltBot
 <img src="Images/tiltbot5.jpg" alt="TiltBot-image" width="600"/>
 
+# Authors
+- David Fuentes Insa
+- Sergio López Parejo
+- Robert Pearson Ruiz
+- Jaime Martínez Coca
 
 ## Index
 - [Project description](#Project-description)
